@@ -1,0 +1,54 @@
+<title>Hairline __TITLE__</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  /* Layout: the figure's own page, filling the window; no chrome of its own. */
+  :root { --bg: #f7f7f8; --fg: #1d1d20; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #0b0b0d; --fg: #e8e8ec; color-scheme: dark; } }
+  :root[data-theme="dark"] { --bg: #0b0b0d; --fg: #e8e8ec; color-scheme: dark; }
+  body { background: var(--bg); color: var(--fg); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 12px; }
+  #fig { position: fixed; inset: 0; display: block; width: 100%; height: 100%; border: 0; background: var(--bg); }
+</style>
+
+<iframe id="fig" title="__TITLE__ figure"></iframe>
+
+<script>
+  const fig = document.getElementById("fig");
+  let tries = 0;
+
+  /* The figure's page caps itself at 640px; ?w= widens it. Always fit 400 × 320 plus its controls to the window. */
+  function load() {
+    tries = 0;
+    const w = Math.floor(Math.min(innerWidth - 32, (innerHeight - 220) * 1.25));
+    fig.src = "figure.html?v=__VER__&w=" + Math.max(300, w);
+  }
+
+  /* The bench calls its slider "intensity" and prints the bare number: name it and give it a unit, per figure. */
+  const SLIDERS = {
+    // <name>: ["slider label", (v) => formatted value], keyed by the figure's __NAME__. For example:
+    // tide: ["water level", (v) => v.toFixed(1) + " m"],
+  };
+  function relabel(doc) {
+    const spec = SLIDERS["__NAME__"], label = doc.querySelector('label[for="intensity"]'), out = doc.getElementById("value");
+    if (!spec || !label || !out) return;
+    label.textContent = spec[0];
+    const shown = doc.createElement("output");
+    shown.className = out.className; shown.style.minWidth = "11ch"; shown.style.textAlign = "right";
+    out.after(shown); out.hidden = true;
+    const sync = () => { const v = Number(out.textContent); shown.textContent = Number.isFinite(v) ? spec[1](v) : out.textContent; };
+    new MutationObserver(sync).observe(out, { childList: true, characterData: true, subtree: true });
+    sync();
+  }
+
+  /* Same origin, so the frame can read its page's height; shrink if it overflows the window. */
+  fig.addEventListener("load", () => {
+    let doc;
+    try { doc = fig.contentDocument; } catch (e) { return; }
+    if (!doc) return;
+    relabel(doc);
+    const h = doc.documentElement.scrollHeight, w = Number(new URL(fig.src).searchParams.get("w"));
+    if (h > innerHeight + 2 && w > 300 && tries++ < 2) fig.src = "figure.html?v=__VER__&w=" + Math.max(300, Math.floor(w * innerHeight / h - 8));
+  });
+
+  let t; addEventListener("resize", () => { clearTimeout(t); t = setTimeout(load, 200); });
+  load();
+</script>
