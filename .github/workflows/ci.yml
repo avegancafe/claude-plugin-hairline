@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate plugin
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          claude plugin validate .
+
+      - name: Every skill is listed in the README
+        run: |
+          missing=0
+          for f in skills/*/SKILL.md; do
+            name=$(basename "$(dirname "$f")")
+            if ! grep -q "hairline:$name\`" README.md; then
+              echo "::error file=README.md::skill $name is not listed in README.md"
+              missing=1
+            fi
+          done
+          exit $missing
+
+      - name: Scripts parse
+        run: |
+          for f in skills/*/*.mjs skills/*/*.js skills/*/examples/*.js; do
+            node --check "$f"
+          done
