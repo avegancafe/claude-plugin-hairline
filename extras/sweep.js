@@ -6,7 +6,7 @@
  */
 const {
   Cam, clamp, circ, facing, fit, flatDot, place, poly, prism, proj, ringAt, rings, seg, unproj, spring, stepS,
-  tween, tset, tval, tdone, mk, pointer, put, register, disposer, solid,
+  tween, tset, tval, tdone, mk, pointer, put, register, disposer, solid, reducedMotion,
 } = HL;
 
 const EXT = 90, GAP = 22, D = EXT + GAP, PB = 4, TL = 7, TT = 1, DOT = 0.4, PASS = 900, REST = [70, 30];
@@ -131,9 +131,9 @@ function mount({ stage, svg, read }, value) {
   // Brute force on the left (+y runs down-left), pruned on the right (+x runs down-right): equal depth, side by side.
   const A = [0, D], Bo = [D, 0];
   fit(C, [[-5, D - 5, -PB], [EXT + 5, D + EXT + 5, -PB], [D + EXT + 5, EXT + 5, -PB], [D - 5, -5, -PB], [D - 5, -5, PH + DT + TL], [-5, D - 5, PH + DT + TL]], 200, 166);
-  const P = proj(C), front = facing(C);
+  const P = proj(C), front = facing(C), settle = () => performance.now() + (reducedMotion() ? 0 : SETTLE);
   // One step costs the same on both boards; the brute-force pass, every point, always takes PASS ms.
-  let N = Math.round(value), ms = PASS / N, over = null, t0 = performance.now() + SETTLE, planned = false;
+  let N = Math.round(value), ms = PASS / N, over = null, t0 = settle(), planned = false;
 
   const g = mk("g", {}, svg);
   const naive = board(g, C, P, front, A[0], A[1], 1), pruned = board(g, C, P, front, Bo[0], Bo[1], 6);
@@ -145,10 +145,10 @@ function mount({ stage, svg, read }, value) {
     if (stepS(px, dt)) m = true;
     if (stepS(py, dt)) m = true;
     const [x, y] = [px.t, py.t];
-    // The searches start only once the probe has settled: a question is asked where the hand rests.
+    // Searches start once the probe settles (at once, in one frame, under reduced motion); lines run from the drawn probe.
     if (now >= t0) {
       if (!planned) { planned = true; naive.plan(x, y, now); pruned.plan(x, y, now); }
-      const k = Math.floor((now - t0) / ms) + 1, a = naive.run(k, x, y), b = pruned.run(k, x, y);
+      const k = reducedMotion() ? Infinity : Math.floor((now - t0) / ms) + 1, a = naive.run(k, px.x, py.x), b = pruned.run(k, px.x, py.x);
       if (a.left || b.left) m = true;
       read.textContent = over ? `brute ${a.taken}${a.left ? "" : " done"} · pruned ${b.taken}${b.left ? "" : " done"}` : "rest";
     } else m = true;
@@ -162,7 +162,7 @@ function mount({ stage, svg, read }, value) {
   function retarget() {
     const [x, y] = over || REST;
     if (x === px.t && y === py.t && planned) return;
-    px.t = x; py.t = y; planned = false; t0 = performance.now() + SETTLE;
+    px.t = x; py.t = y; planned = false; t0 = settle();
     if (!over) read.textContent = "rest";
     B.wake();
   }
@@ -185,7 +185,7 @@ function mount({ stage, svg, read }, value) {
   read.textContent = "rest";
 
   return {
-    set: (v) => { N = Math.round(v); ms = PASS / N; naive.show(N); pruned.show(N); planned = false; t0 = performance.now() + SETTLE; B.wake(); },
+    set: (v) => { N = Math.round(v); ms = PASS / N; naive.show(N); pruned.show(N); planned = false; t0 = settle(); B.wake(); },
     destroy: bag.dispose,
   };
 }
