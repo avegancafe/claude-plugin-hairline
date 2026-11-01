@@ -32,7 +32,7 @@ One figure, one idea. A concept that needs a label to be understood is not a con
 
 1. Read `rules.md`. The ten rules are not advice: a figure that breaks one is not finished.
 2. Read the index at the top of `kernel.js`: the comment under the hash line, down to `var HL`. It lists everything you may call. Do not read the code under it.
-3. Read the example nearer your concept: `examples/terrain.js` for a continuous field, `examples/riffle.js` for discrete items.
+3. Read the example nearer your concept: `examples/terrain.js` for a continuous field, `examples/riffle.js` for discrete items, `extras/sweep.js` at the plugin's root, two folders up from this one, for a computation shown step by step or two methods compared.
 4. Write the figure as `<name>.js` in the person's working directory, in the shape of the examples: take what you need from `HL`, define `mount({ stage, svg, read }, value)` returning `{ set, destroy }`, and end the file with `hairline({ name, means, rules, range, tour, mount })`.
    - `name`: lowercase, one word or hyphenated.
    - `means`: one sentence, 140 characters at most, saying what the figure shows. It is the line under the stage.
@@ -72,6 +72,7 @@ Defaults: the page's own pace (`--speed 1`), 60 fps for MP4 and 50 for GIF, 3× 
 - **The clock is paused on purpose.** Playwright's `page.clock.install()` keeps page time running in real time, so every screenshot (about 100 ms at 3×) leaks into the page and the video plays several times too fast. The script calls `clock.pauseAt()` right after `goto` and advances the page by exactly one frame's worth per frame. Never remove that.
 - **GIF frame rates.** A GIF stores frame delays in hundredths of a second, so only 50, 25, 20 or 10 fps keep pace; 30 fps plays about 10% fast.
 - **Check the speed with `--verify`.** It also records 20 s of the page in real time and prints a frame-to-frame motion ratio. A correct render comes out near 0.9; a ratio near 2 means the video is too fast.
+- **A page cannot hand over the file.** An artifact's sandbox blocks downloads, so never build an export button: render here and give the person the file.
 
 ## 5. Adjust
 
@@ -92,5 +93,9 @@ When the person asks for a change, edit only `<name>.js`, then run `look.mjs` ag
 | editing the kernel or the bench to make something work | the figure is wrong; change the figure |
 | making the tour visit every part in turn | three stops that each show a different answer, then a leave: a lap is a sentence, not an inventory |
 | letting in a second idea | cut it: one figure, one idea |
+| giving the slider a setting of the animation (a pass time, a stagger) | give it a number of the situation, with a unit: how many, how far (`concepts.md`, step 7) |
+| timing a step-by-step animation by feel | fit one full pass inside a tour stop, about 900 ms (`concepts.md`, "A computation") |
+| showing which side is faster with a meter that grows | show the finish: a done side changes state, and the read-out says `done` |
+| shrinking the inputs until the effect is gone | use enough items that the gap shows; let the slider set the count |
 | tracing a path from the SVG, or copying its coordinates | build the part as a solid with the proportions the card gives (`source.md`) |
 | keeping a part of the SVG that is decoration | drop it: two or three parts make the object |

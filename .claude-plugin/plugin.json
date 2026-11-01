@@ -1,6 +1,6 @@
 {
   "name": "hairline",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Hairline figures: isometric line-drawing animations that answer the pointer, shipped as one self-contained HTML file. hairline-create draws a new figure from an idea; hairline-adopt rebuilds an SVG (icon, logo, illustration) as one. Vendored from Lucas Marques' MIT-licensed @lucasmarkes/hairline skills.",
   "author": {
     "name": "Kyle Holzinger",

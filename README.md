@@ -35,6 +35,13 @@ slider. To use it, copy it next to the figure, rename the figure to
 `figure.html`, replace `__TITLE__` and `__NAME__`, stamp `__VER__` with a short
 hash of the built page (so a republish never serves a stale cached figure), and
 add the figure's slider label and formatter to the `SLIDERS` table.
+Write any non-ASCII character in that formatter as `String.fromCharCode(...)`
+(`215` for `×`): a page served without a charset garbles it.
+
+`extras/sweep.js` is a figure, not from upstream, kept as the example of a
+computation shown step by step: brute force and a pruned search racing on twin
+boards. `hairline-create`'s `concepts.md` points to it. Build it like any figure:
+`node skills/hairline-create/build.mjs extras/sweep.js`.
 
 ## Contributing
 

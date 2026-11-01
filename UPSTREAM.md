@@ -11,6 +11,11 @@ MIT-licensed, copyright (c) 2026 Lucas Marques. See [`LICENSE`](LICENSE).
     `/hairline-create`, because skills in a plugin are namespaced by the plugin name.
   - Added `hairline-create/render.mjs` (renders a built figure to MP4 or GIF) and
     the "Save as video" subsection of `hairline-create/SKILL.md` that documents it.
+  - `hairline-create/concepts.md`: step 7 asks for a slider number of the situation
+    (a count, a reach), not of the animation, and a new section, "A computation, or two
+    methods compared", points at `extras/sweep.js`.
+  - `hairline-create/SKILL.md`: step 2.3 names `extras/sweep.js`, "Save as video" says a
+    page cannot offer a download, and "What goes wrong" has four more rows.
 
 `kernel.js`, `bench.html` and `examples/` are upstream's own files and the skill
 forbids editing them; keep them byte-identical to upstream.
