@@ -10,7 +10,7 @@ A concept is three things: **an object**, **what the pointer does to it**, and *
 4. **Give the pointer that variable.** Where it is sets a position (continuous); what it is over sets a choice (discrete). The answer should be what a hand would expect from the object.
 5. **Design the rest.** What does the object look like when nobody touches it? It must already be a composition, and already say what the figure is about.
 6. **Choose the read-out's words.** A few characters naming what is under the pointer: `cell 4·2`, `08`, `lock 3`. And `rest`.
-7. **Choose the slider's number.** One number that makes the answer weaker or stronger: a radius, a stagger, a gap, a rate. Its three values go in `range`.
+7. **Choose the slider's number.** One number that changes the situation the figure is about, so a stranger can name it with a unit: how many items, how far a reach, how many needed. Not a setting of the animation (a pass time, a stagger, a spring): nobody watching knows what that is. Its three values go in `range`.
 
 ## Six answers already proven
 
@@ -26,6 +26,15 @@ The package's six figures each answer the pointer a different way. A new figure 
 | **Push the camera** | Turntable: a platter you flick round | pushes; friction bleeds the spin; detents catch it | friction, then a spring | the coast |
 
 `examples/terrain.js` is the first and `examples/riffle.js` the second, in full.
+
+## A computation, or two methods compared
+
+Asked to show how something is computed, or why one method beats another, the figure runs the work step by step, visibly, and two methods race on twin boards with the same inputs on one clock. `extras/sweep.js`, at the root of this plugin, is one in full.
+
+- **One step, one visible change.** Each step lights one part (a cell checked, an item measured), with one bright stroke on the step in hand.
+- **Fit the work inside a tour stop.** The tour travels to a stop in 900 ms and holds it 1200 ms (the kernel's `TRAVEL` and `DWELL`). Time the slowest method's whole pass to about 900 ms, so the lap shows a side finish at every stop. Sized by any other clock, the lap moves on before anything has happened.
+- **Show the finish.** A board that is done changes state for good (its ring goes solid), and the read-out says so: `brute 500 · pruned 61 done`. Do not add a meter that grows with the work: it moves the same on both sides and hides the race.
+- **Make the inputs big enough for the effect.** A gain that needs scale disappears at a toy size: at 32 items pruning saved one test. Use enough items that the slow side is visibly slow, and let the slider set the count, so moving it shows the gap grow.
 
 ## An empty state
 
